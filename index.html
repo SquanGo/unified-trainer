@@ -390,31 +390,7 @@
             navigator.serviceWorker.register("./service-worker.js").catch(console.error);
         }
     </script>
-    <script>
-    (() => {
-        const loadFirebaseAnalytics = () => {
-            Promise.all([
-                import("https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js"),
-                import("https://www.gstatic.com/firebasejs/12.18.0/firebase-analytics.js")
-            ]).then(([appSdk, analyticsSdk]) => {
-                const firebaseConfig = {
-                    apiKey: "AIzaSyAqHgs9F8AnilmK6UjRqjcsW1PAiCQRK0Y",
-                    authDomain: "squan-go.firebaseapp.com",
-                    projectId: "squan-go",
-                    storageBucket: "squan-go.firebasestorage.app",
-                    messagingSenderId: "82254148579",
-                    appId: "1:82254148579:web:d8c173e3c7bdc351c166d6",
-                    measurementId: "G-8V2YY0HXTS"
-                };
-                analyticsSdk.getAnalytics(appSdk.initializeApp(firebaseConfig));
-            }).catch(console.error);
-        };
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-            if ('requestIdleCallback' in window) requestIdleCallback(loadFirebaseAnalytics, { timeout: 2500 });
-            else setTimeout(loadFirebaseAnalytics, 500);
-        }));
-    })();
-    </script>
+    <script src="/analytics.js" defer></script>
 </body>
 
     <script type="module" src="script/main.js"></script>
