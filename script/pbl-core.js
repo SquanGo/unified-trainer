@@ -8,22 +8,22 @@ export { pblDefaultLists };
 
 // ─── PBL STATE ────────────────────────────────────────────────────────────────
 
-export let pblPossible  = [];  // [[top, bottom], ...]
-export let pblSelected  = [];  // entries end with '+' or '-'  e.g. "Al/Ar+"
+export let pblPossible = [];  // [[top, bottom], ...]
+export let pblSelected = [];  // entries end with '+' or '-'  e.g. "Al/Ar+"
 export let pblScrambleList = []; // [[normal, karn, caseName], ...]
 export let pblRemaining = [];
-let pblEachCase  = 0;   // 0 = random, 1+ = fixed count per cycle
-let pblWeight    = false;
+let pblEachCase = 0;   // 0 = random, 1+ = fixed count per cycle
+let pblWeight = false;
 export let pblUseBarflip = false;
-export let pblHasActive    = false;
-export let pblCaseSpliced  = false; // true once a case has been taken from remaining for display
+export let pblHasActive = false;
+export let pblCaseSpliced = false; // true once a case has been taken from remaining for display
 
-export let pblOffset      = 0;  // how far back in pblScrambleList we're browsing
-let pblCurrentCase  = "";
+export let pblOffset = 0;  // how far back in pblScrambleList we're browsing
+let pblCurrentCase = "";
 export let pblPreviousCase = "";
 
 export let pblPreviouslySelected = null; // null = nothing to undo
-export let pblRedoSelected       = null; // null = nothing to redo
+export let pblRedoSelected = null; // null = nothing to redo
 
 export function pblSetOffset(value) { pblOffset = value; }
 export function pblSetHistory(previous, redo) {
@@ -35,22 +35,22 @@ export function pblResetSelection() {
     pblRemaining = [];
 }
 
-export let pblScrambleMode  = 'long'; // 'long' | 'short'
+export let pblScrambleMode = 'long'; // 'long' | 'short'
 let pblAllowBottom56 = false;
 
-let pblWorker     = null;
+let pblWorker = null;
 export let pblWorkerBusy = false;
-export let pblPending    = null; // null | 'waiting' | worker-result object
+export let pblPending = null; // null | 'waiting' | worker-result object
 let pblPendingFor = null; // the choice string used to request pblPending (for match validation)
 
 // pblDefaultLists is declared as const in pbl-data.js (JSON moved there).
-export let pblUserLists    = {};
+export let pblUserLists = {};
 
 // ─── BARFLIP STATE ───────────────────────────────────────────────────────────
 
-let pblSelectBtnState    = 'none'; // 'none'|'both'|'plus'|'minus'
-let pblBarflipOverride   = null;   // null | '+' | '-'
-let pblShowBarflipUI     = false;
+let pblSelectBtnState = 'none'; // 'none'|'both'|'plus'|'minus'
+let pblBarflipOverride = null;   // null | '+' | '-'
+let pblShowBarflipUI = false;
 export let pblCountBarflip = false; // "count + and - as 2 cases" — only takes effect while B is on
 
 // True when a case's two barflips should be counted/trained as separate cases:
@@ -86,10 +86,10 @@ function pblMigrateLegacy(arr) {
 
 // Returns 'none'|'both'|'plus'|'minus' for a base case name (no suffix).
 function pblCaseMode(base) {
-    const hasPlus  = pblSelected.includes(base + '+');
+    const hasPlus = pblSelected.includes(base + '+');
     const hasMinus = pblSelected.includes(base + '-');
     if (hasPlus && hasMinus) return 'both';
-    if (hasPlus)  return 'plus';
+    if (hasPlus) return 'plus';
     if (hasMinus) return 'minus';
     return 'none';
 }
@@ -97,15 +97,15 @@ function pblCaseMode(base) {
 // Updates the DOM class on a .case element.
 export function pblSetDomClass(el, mode) {
     el.classList.remove('checked-both', 'checked-plus', 'checked-minus');
-    if      (mode === 'both')  el.classList.add('checked-both');
-    else if (mode === 'plus')  el.classList.add('checked-plus');
+    if (mode === 'both') el.classList.add('checked-both');
+    else if (mode === 'plus') el.classList.add('checked-plus');
     else if (mode === 'minus') el.classList.add('checked-minus');
 }
 
 // Mode-cycling helpers — used by click / right-click / touch / select-all.
-function pblNextModeForw(m)   { return m === 'none' ? 'both'  : m === 'both'  ? 'plus' : m === 'plus' ? 'minus' : 'both'; }
-function pblNextModeBack(m)  { return m === 'none' ? 'minus' : m === 'minus' ? 'plus' : m === 'plus' ? 'both'  : 'minus'; }
-function pblNextModeToggle(m) { return m === 'both' ? 'none'  : 'both'; }
+function pblNextModeForw(m) { return m === 'none' ? 'both' : m === 'both' ? 'plus' : m === 'plus' ? 'minus' : 'both'; }
+function pblNextModeBack(m) { return m === 'none' ? 'minus' : m === 'minus' ? 'plus' : m === 'plus' ? 'both' : 'minus'; }
+function pblNextModeToggle(m) { return m === 'both' ? 'none' : 'both'; }
 
 export function pblName(pbl) { return `${pbl[0]}/${pbl[1]}`; }
 
@@ -146,15 +146,15 @@ function pblSyncSettingsDisabled() {
         pblSaveSettings();
     }
 
-    const lockedB  = pblUseBarflip && pblIsBarflipRequired();
-    const eachOn   = eachCaseEl.checked;
+    const lockedB = pblUseBarflip && pblIsBarflipRequired();
+    const eachOn = eachCaseEl.checked;
     const weightOn = weightEl.checked;
 
     const bRow = useBarflipEl.closest('.settings-row');
-    if (bRow) { bRow.classList.toggle('settings-disabled', lockedB);  useBarflipEl.disabled = lockedB; }
+    if (bRow) { bRow.classList.toggle('settings-disabled', lockedB); useBarflipEl.disabled = lockedB; }
 
     const wRow = weightEl.closest('.settings-row');
-    if (wRow) { wRow.classList.toggle('settings-disabled', eachOn);   weightEl.disabled     = eachOn; }
+    if (wRow) { wRow.classList.toggle('settings-disabled', eachOn); weightEl.disabled = eachOn; }
 
     // eachCaseEl lives in Settings (.settings-row); set .disabled unconditionally
     // and toggle whichever wrapper ancestor is present.
@@ -180,9 +180,9 @@ function pblRecolorAll() {
 // ─── PBL STORAGE ─────────────────────────────────────────────────────────────
 
 export const pblStorage = {
-    getItem:    k      => localStorage.getItem(k + 'PBL'),
-    setItem:    (k, v) => localStorage.setItem(k + 'PBL', v),
-    removeItem: k      => localStorage.removeItem(k + 'PBL'),
+    getItem: k => localStorage.getItem(k + 'PBL'),
+    setItem: (k, v) => localStorage.setItem(k + 'PBL', v),
+    removeItem: k => localStorage.removeItem(k + 'PBL'),
 };
 
 const pblSettingList = [eachCaseEl, karnEl, weightEl, globalBarflipEl, useBarflipEl, countBarflipEl];
@@ -192,7 +192,7 @@ function pblMigrateLegacyStorage() {
     let migrated = false;
     for (const key of keys) {
         const legacyData = localStorage.getItem(key);
-        const newData    = pblStorage.getItem(key);
+        const newData = pblStorage.getItem(key);
         if (legacyData !== null && newData === null) {
             pblStorage.setItem(key, legacyData);
             localStorage.removeItem(key);
@@ -237,10 +237,10 @@ export function pblRestoreSettings({ restoreShared = true } = {}) {
     }
     // Sync derived state that depends on checkbox values.
     if (restoreShared) setUsingKarn(karnEl.checked ? 1 : 0);
-    pblWeight        = weightEl.checked;
-    pblUseBarflip    = useBarflipEl.checked;
+    pblWeight = weightEl.checked;
+    pblUseBarflip = useBarflipEl.checked;
     pblShowBarflipUI = globalBarflipEl.checked;
-    pblCountBarflip  = countBarflipEl.checked;
+    pblCountBarflip = countBarflipEl.checked;
     setPblCountBarflip(pblCountsSeparately());
     // Only adjust PBL-only row visibility while PBL is the active trainer —
     // otherwise (settings opened from OBL) applyMode has already hidden these
@@ -272,7 +272,7 @@ export function pblHide(id) { document.getElementById(id)?.classList.add("hidden
 export function pblSelect(s) {
     // s must end with '+' or '-'
     const base = s.slice(0, -1);
-    const el   = document.getElementById(base);
+    const el = document.getElementById(base);
     if (!pblSelected.includes(s)) pblSelected.push(s);
     if (pblEachCase > 0) {
         const count = pblEachCase * (pblWeight ? squan.getPBLWeight(base) : 1);
@@ -298,7 +298,7 @@ export function pblSelect(s) {
     }
     if (el) {
         const override = pblEffectiveOverride();
-        const mode     = pblCaseMode(base);
+        const mode = pblCaseMode(base);
         pblSetDomClass(el, (override !== null && mode !== 'none') ? (override === '+' ? 'plus' : 'minus') : mode);
     }
     updateSelCount();
@@ -309,12 +309,12 @@ export function pblDeselect(s) {
     // s must end with '+' or '-'
     if (!pblSelected.includes(s)) return;
     const base = s.slice(0, -1);
-    const el   = document.getElementById(base);
-    pblSelected  = pblSelected.filter(a => a !== s);
+    const el = document.getElementById(base);
+    pblSelected = pblSelected.filter(a => a !== s);
     pblRemaining = pblRemaining.filter(a => a !== s);
     if (el) {
         const override = pblEffectiveOverride();
-        const mode     = pblCaseMode(base);
+        const mode = pblCaseMode(base);
         pblSetDomClass(el, (override !== null && mode !== 'none') ? (override === '+' ? 'plus' : 'minus') : mode);
     }
     updateSelCount();
@@ -350,14 +350,14 @@ function pblRefillRemaining() {
     // De-duplicate by base so a case's weight is independent of how many barflip
     // states are selected. Each base case gets weight×eachCase slots; the suffix
     // is chosen randomly from whichever barflips are selected for it.
-    const seenBases    = new Set();
+    const seenBases = new Set();
     const dedupedBases = [];
     for (const s of pblSelected) {
         const base = s.slice(0, -1);
         if (!seenBases.has(base)) { seenBases.add(base); dedupedBases.push(base); }
     }
     pblRemaining = dedupedBases.flatMap(base => {
-        const count    = pblEachCase * (pblWeight ? squan.getPBLWeight(base) : 1);
+        const count = pblEachCase * (pblWeight ? squan.getPBLWeight(base) : 1);
         const suffixes = ['+', '-'].filter(sx => pblSelected.includes(base + sx));
         return Array.from({ length: count }, () => base + suffixes[randInt(0, suffixes.length - 1)]);
     });
@@ -372,7 +372,7 @@ function pblRestartWorker() {
     pblWorker = new Worker('./script/worker.js', { type: 'module' });
     pblWorker.onmessage = pblNormalHandler;
     pblWorkerBusy = false;
-    pblPendingFor  = null;
+    pblPendingFor = null;
 }
 
 function pblNormalHandler(e) {
@@ -384,13 +384,13 @@ function pblNormalHandler(e) {
 export function pblRequestScramble(choice) {
     if (pblWorkerBusy) return;
     pblWorkerBusy = true;
-    pblPending    = null;
-    const override   = pblEffectiveOverride();
-    const suffix     = override ?? choice.at(-1);
+    pblPending = null;
+    const override = pblEffectiveOverride();
+    const suffix = override ?? choice.at(-1);
     if (!['+', '-'].includes(suffix)) throw new Error(`pblRequestScramble: invalid suffix "${suffix}"`);
     pblWorker.postMessage({
-        caseName:     choice.slice(0, -1),
-        equatorMode:  suffix === '+' ? 'slash' : 'bar',
+        caseName: choice.slice(0, -1),
+        equatorMode: suffix === '+' ? 'slash' : 'bar',
         scrambleMode: pblScrambleMode,
         allowBottom56: pblAllowBottom56,
     });
@@ -411,13 +411,13 @@ function pblCancelIfConflicting(newMode, newBottom56) {
 
 export function pblGenerateScramble(regen = false) {
     if (pblSelected.length === 0) {
-        timerEl.textContent            = "--:--";
-        currentScrambleEl.textContent  = "Scramble will show up here";
+        timerEl.textContent = "--:--";
+        currentScrambleEl.textContent = "Scramble will show up here";
         previousScrambleEl.textContent = "Last scramble will show up here";
-        pblHasActive    = false;
-        pblCaseSpliced  = false;
+        pblHasActive = false;
+        pblCaseSpliced = false;
         pblScrambleList = [];
-        pblPending      = null;
+        pblPending = null;
         updateRemainingCount();
         updateScrambleNavButtons();
         return;
@@ -433,21 +433,21 @@ export function pblGenerateScramble(regen = false) {
     }
 
     pblCaseSpliced = true; // set synchronously before splice
-    const idx    = randInt(0, pblRemaining.length - 1);
+    const idx = randInt(0, pblRemaining.length - 1);
     const choice = pblRemaining.splice(idx, 1)[0];
     updateRemainingCount();
 
     if (regen) {
-        pblPending    = 'waiting';
+        pblPending = 'waiting';
         pblPendingFor = null; // regen is not speculative; clear any stale tracker
         pblWorkerBusy = false; // allow re-fire
         pblRequestScramble(choice);
-        pblWorker.onmessage = function(e) {
+        pblWorker.onmessage = function (e) {
             pblWorkerBusy = false;
             if (e.data.error) { console.error(e.data.error); return; }
             const final = [e.data.scramble, e.data.karn, choice];
             pblPreviousCase = pblCurrentCase;
-            pblCurrentCase  = choice; // use full choice (with suffix) for accurate tracking
+            pblCurrentCase = choice; // use full choice (with suffix) for accurate tracking
             pblScrambleList[pblScrambleList.length - 1] = final;
             if (pblOffset === 0) currentScrambleEl.textContent = final[usingKarn];
             pblWorker.onmessage = pblNormalHandler;
@@ -463,10 +463,10 @@ export function pblGenerateScramble(regen = false) {
         (pblEffectiveOverride() !== null || pblPendingFor.at(-1) === choice.at(-1));
     if (pendingValid) {
         const data = pblPending;
-        pblPending    = null;
+        pblPending = null;
         pblPendingFor = null;
         pblPreviousCase = pblCurrentCase;
-        pblCurrentCase  = choice; // use full choice (with suffix) for accurate tracking
+        pblCurrentCase = choice; // use full choice (with suffix) for accurate tracking
         const final = [data.scramble, data.karn, choice];
 
         if (pblScrambleList.length) {
@@ -489,19 +489,19 @@ export function pblGenerateScramble(regen = false) {
     } else {
         // No valid pending (none cached, mismatch, or worker busy with wrong case) —
         // discard stale result, cancel any in-flight speculative gen, and generate for choice.
-        pblPending    = null;
+        pblPending = null;
         pblPendingFor = null;
         if (pblWorkerBusy) pblRestartWorker();
         currentScrambleEl.classList.add("generating");
         pblPending = 'waiting';
         pblRequestScramble(choice);
 
-        pblWorker.onmessage = function(e) {
+        pblWorker.onmessage = function (e) {
             pblWorkerBusy = false;
             if (e.data.error) { console.error(e.data.error); return; }
             const data = e.data;
             pblPreviousCase = pblCurrentCase;
-            pblCurrentCase  = choice; // use full choice (with suffix) for accurate tracking
+            pblCurrentCase = choice; // use full choice (with suffix) for accurate tracking
             const final = [data.scramble, data.karn, choice];
 
             if (pblScrambleList.length) {
@@ -514,7 +514,7 @@ export function pblGenerateScramble(regen = false) {
             pblScrambleList.push(final);
             if (!pblHasActive) timerEl.textContent = "0.00";
             pblHasActive = true;
-            pblPending   = null;
+            pblPending = null;
             updateScrambleNavButtons();
 
             // Kick off pre-generation of the next scramble.
@@ -568,54 +568,54 @@ export function pblEnsureGrid() {
 
 export function pblRestoreGrid(buildGrid = false) {
     if (buildGrid) {
-    caseListEl.dataset.trainerGrid = 'pbl';
-    caseListEl.style.gridTemplateColumns = '';
-    caseListEl.innerHTML = pblPossible
-        .map(([t, b]) => `<div class="case" id="${t}/${b}">${t} / ${b}</div>`)
-        .join('');
+        caseListEl.dataset.trainerGrid = 'pbl';
+        caseListEl.style.gridTemplateColumns = '';
+        caseListEl.innerHTML = pblPossible
+            .map(([t, b]) => `<div class="case" id="${t}/${b}">${t} / ${b}</div>`)
+            .join('');
 
-    document.querySelectorAll(".case").forEach(caseEl => {
-        const base = caseEl.id;
-        caseEl.addEventListener("click", () => {
-            if (usingTimer()) return;
-            pblSnapSelection();
-            const mode = pblCaseMode(base);
-            if (!pblUseBarflip) {
-                if (mode === 'both') { pblDeselect(base+'+'); pblDeselect(base+'-'); }
-                else                 { pblSelect(base+'+');   pblSelect(base+'-'); }
-            } else {
-                if      (mode === 'none')  { pblSelect(base+'+');   pblSelect(base+'-'); }
-                // must deselect before select! because deselect might just delete
-                // the case in pblRemaining that was selected in the select function.
-                else if (mode === 'both')  { pblDeselect(base+'-'); pblSelect(base+'+'); }
-                else if (mode === 'plus')  { pblDeselect(base+'+'); pblSelect(base+'-'); }
-                else                       { pblDeselect(base+'+'); pblDeselect(base+'-'); }
-            }
-            pblSaveSelected();
+        document.querySelectorAll(".case").forEach(caseEl => {
+            const base = caseEl.id;
+            caseEl.addEventListener("click", () => {
+                if (usingTimer()) return;
+                pblSnapSelection();
+                const mode = pblCaseMode(base);
+                if (!pblUseBarflip) {
+                    if (mode === 'both') { pblDeselect(base + '+'); pblDeselect(base + '-'); }
+                    else { pblSelect(base + '+'); pblSelect(base + '-'); }
+                } else {
+                    if (mode === 'none') { pblSelect(base + '+'); pblSelect(base + '-'); }
+                    // must deselect before select! because deselect might just delete
+                    // the case in pblRemaining that was selected in the select function.
+                    else if (mode === 'both') { pblDeselect(base + '-'); pblSelect(base + '+'); }
+                    else if (mode === 'plus') { pblDeselect(base + '+'); pblSelect(base + '-'); }
+                    else { pblDeselect(base + '+'); pblDeselect(base + '-'); }
+                }
+                pblSaveSelected();
+            });
+            caseEl.addEventListener("contextmenu", e => {
+                e.preventDefault();
+                if (usingTimer()) return;
+                pblSnapSelection();
+                const mode = pblCaseMode(base);
+                if (!pblUseBarflip) {
+                    if (mode === 'both') { pblDeselect(base + '+'); pblDeselect(base + '-'); }
+                    else { pblSelect(base + '+'); pblSelect(base + '-'); }
+                } else {
+                    if (mode === 'none') { pblDeselect(base + '+'); pblSelect(base + '-'); }
+                    else if (mode === 'both') { pblDeselect(base + '+'); pblDeselect(base + '-'); }
+                    else if (mode === 'plus') { pblSelect(base + '+'); pblSelect(base + '-'); }
+                    // must deselect before select! because deselect might just delete
+                    // the case in pblRemaining that was selected in the select function.
+                    else { pblDeselect(base + '-'); pblSelect(base + '+'); }
+                }
+                pblSaveSelected();
+            });
+
+            pblSetDomClass(caseEl, pblCaseMode(base));
         });
-        caseEl.addEventListener("contextmenu", e => {
-            e.preventDefault();
-            if (usingTimer()) return;
-            pblSnapSelection();
-            const mode = pblCaseMode(base);
-            if (!pblUseBarflip) {
-                if (mode === 'both') { pblDeselect(base+'+'); pblDeselect(base+'-'); }
-                else                 { pblSelect(base+'+');   pblSelect(base+'-'); }
-            } else {
-                if      (mode === 'none')  { pblDeselect(base+'+'); pblSelect(base+'-'); }
-                else if (mode === 'both')  { pblDeselect(base+'+'); pblDeselect(base+'-'); }
-                else if (mode === 'plus')  { pblSelect(base+'+');   pblSelect(base+'-'); }
-                // must deselect before select! because deselect might just delete
-                // the case in pblRemaining that was selected in the select function.
-                else                       { pblDeselect(base+'-'); pblSelect(base+'+'); }
-            }
-            pblSaveSelected();
-        });
 
-        pblSetDomClass(caseEl, pblCaseMode(base));
-    });
-
-    applyFilter(''); // re-run any in-memory filter on the newly built DOM
+        applyFilter(''); // re-run any in-memory filter on the newly built DOM
     }
 
     // Update display — restore scramble text when a PBL scramble is active.
@@ -624,9 +624,9 @@ export function pblRestoreGrid(buildGrid = false) {
         pblDisplayPrevScram();
         if (timerEl.textContent === '--:--') timerEl.textContent = '0.00';
     } else {
-        currentScrambleEl.textContent  = "Scramble will show up here";
+        currentScrambleEl.textContent = "Scramble will show up here";
         previousScrambleEl.textContent = "Last scramble will show up here";
-        timerEl.textContent            = "--:--";
+        timerEl.textContent = "--:--";
         updateScrambleNavButtons();
     }
 
@@ -651,10 +651,10 @@ function pblGetVisibleBases() {
 
 function pblApplyModeToList(bases, mode) {
     for (const base of bases) {
-        pblDeselect(base+'+'); pblDeselect(base+'-');
-        if      (mode === 'both')  { pblSelect(base+'+'); pblSelect(base+'-'); }
-        else if (mode === 'plus')    pblSelect(base+'+');
-        else if (mode === 'minus')   pblSelect(base+'-');
+        pblDeselect(base + '+'); pblDeselect(base + '-');
+        if (mode === 'both') { pblSelect(base + '+'); pblSelect(base + '-'); }
+        else if (mode === 'plus') pblSelect(base + '+');
+        else if (mode === 'minus') pblSelect(base + '-');
     }
     pblSaveSelected();
 }
@@ -664,7 +664,7 @@ export function pblSelectAll(isRightClick = false) {
     pblSnapSelection();
     const bases = pblPossible.map(pbl => pblName(pbl));
     if (!pblUseBarflip) pblSelectBtnState = pblNextModeToggle(pblSelectBtnState);
-    else                pblSelectBtnState = isRightClick ? pblNextModeBack(pblSelectBtnState) : pblNextModeForw(pblSelectBtnState);
+    else pblSelectBtnState = isRightClick ? pblNextModeBack(pblSelectBtnState) : pblNextModeForw(pblSelectBtnState);
     pblApplyModeToList(bases, pblSelectBtnState);
 }
 
@@ -674,8 +674,8 @@ export function pblDeselectAll() {
     pblSelectBtnState = 'none';
     for (const pbl of pblPossible) {
         const base = pblName(pbl);
-        pblDeselect(base+'+');
-        pblDeselect(base+'-');
+        pblDeselect(base + '+');
+        pblDeselect(base + '-');
     }
     pblSaveSelected();
 }
@@ -685,7 +685,7 @@ export function pblSelectThese(isRightClick = false) {
     pblSnapSelection();
     const bases = pblGetVisibleBases();
     if (!pblUseBarflip) pblSelectBtnState = pblNextModeToggle(pblSelectBtnState);
-    else                pblSelectBtnState = isRightClick ? pblNextModeBack(pblSelectBtnState) : pblNextModeForw(pblSelectBtnState);
+    else pblSelectBtnState = isRightClick ? pblNextModeBack(pblSelectBtnState) : pblNextModeForw(pblSelectBtnState);
     pblApplyModeToList(bases, pblSelectBtnState);
 }
 
@@ -695,8 +695,8 @@ export function pblDeselectThese() {
     pblSelectBtnState = 'none';
     for (const el of caseListEl.children) {
         if (!el.classList.contains("hidden")) {
-            pblDeselect(el.id+'+');
-            pblDeselect(el.id+'-');
+            pblDeselect(el.id + '+');
+            pblDeselect(el.id + '-');
         }
     }
     pblSaveSelected();
@@ -758,7 +758,7 @@ export function pblSelectList(listName, setSelection) {
             // slots so the counter doesn't double-count it.
             if (pblCaseSpliced && pblCurrentCase) {
                 const base = pblCurrentCase.slice(0, -1);
-                const idx  = pblRemaining.findIndex(r => r.slice(0, -1) === base);
+                const idx = pblRemaining.findIndex(r => r.slice(0, -1) === base);
                 if (idx !== -1) pblRemaining.splice(idx, 1);
             }
         }
@@ -786,14 +786,14 @@ export function pblSelectTag(tagId, setSelection) {
         pblDeselectAll();
         for (const { base, mode } of modes) {
             const m = ovr ?? mode; // global override wins; otherwise slicecount-derived mode
-            if (m === '+')      pblSelect(base + '+');
+            if (m === '+') pblSelect(base + '+');
             else if (m === '-') pblSelect(base + '-');
             else { pblSelect(base + '+'); pblSelect(base + '-'); }
         }
         if (pblEachCase > 0) {
             pblRefillRemaining();
             if (pblCaseSpliced && pblCurrentCase) {
-                const b   = pblCurrentCase.slice(0, -1);
+                const b = pblCurrentCase.slice(0, -1);
                 const idx = pblRemaining.findIndex(r => r.slice(0, -1) === b);
                 if (idx !== -1) pblRemaining.splice(idx, 1);
             }
@@ -816,15 +816,15 @@ export async function pblInit() {
 
     // Build the full cross-product list (even×even + odd×odd).
     for (const t of SquanLib.evenPLL) for (const b of SquanLib.evenPLL) pblPossible.push([t, b]);
-    for (const t of SquanLib.oddPLL)  for (const b of SquanLib.oddPLL)  pblPossible.push([t, b]);
-    pblPossible = pblPossible.filter(([t,b])=> (t!=="-" || b!=="-"));
+    for (const t of SquanLib.oddPLL) for (const b of SquanLib.oddPLL) pblPossible.push([t, b]);
+    pblPossible = pblPossible.filter(([t, b]) => (t !== "-" || b !== "-"));
 
     // Three-layer sort: alphabetical pair → first letter of shorter-name layer →
     // first letter of longer-name layer → plain alphabetical.
     pblPossible.sort((pa, pb) => {
         const na = pblName(pa), nb = pblName(pb);
-        const la1 = [na[0], na[na.indexOf('/')+1]].sort().join('');
-        const lb1 = [nb[0], nb[nb.indexOf('/')+1]].sort().join('');
+        const la1 = [na[0], na[na.indexOf('/') + 1]].sort().join('');
+        const lb1 = [nb[0], nb[nb.indexOf('/') + 1]].sort().join('');
         if (la1 !== lb1) return la1 < lb1 ? -1 : 1;
         const [paS, paL] = [na.split('/')[0], na.split('/')[1]].sort();
         const [pbS, pbL] = [nb.split('/')[0], nb.split('/')[1]].sort();
@@ -838,6 +838,15 @@ export async function pblInit() {
     // Load settings, selection, lists from storage.
     pblLoadStorage();
 
+    // Add Frequency lists by default for focused training.
+    // One native list per case weight (1, 2, 4, 8, 16), built
+    // from squanlib.js's PBLWeights so they stay in sync if the weights change.
+    for (const f of [1, 2, 4, 8, 16]) {
+        pblDefaultLists[`Freq ${f} PBLs`] = pblPossible
+            .map(pblName)
+            .filter(n => squan.getPBLWeight(n) === f);
+    }
+
     // Prepare default lists in memory. The hidden list-menu DOM is rendered only
     // when the lists modal opens.
     for (const k of Object.keys(pblDefaultLists))
@@ -847,11 +856,11 @@ export async function pblInit() {
 export function pblLoadStorage() {
     pblMigrateLegacyStorage();
 
-    const storedSelected  = pblStorage.getItem("selected");
-    const storedSettings  = pblStorage.getItem("settings");
-    const storedScrMode   = pblStorage.getItem("scrambleMode");
-    const storedBot56     = pblStorage.getItem("allowBottom56");
-    const storedBarflip   = pblStorage.getItem("barflipOverride");
+    const storedSelected = pblStorage.getItem("selected");
+    const storedSettings = pblStorage.getItem("settings");
+    const storedScrMode = pblStorage.getItem("scrambleMode");
+    const storedBot56 = pblStorage.getItem("allowBottom56");
+    const storedBarflip = pblStorage.getItem("barflipOverride");
     const storedUserLists = pblStorage.getItem("userLists");
 
     // Apply settings checkboxes directly. Do not synthetic-click during load:
@@ -865,8 +874,8 @@ export function pblLoadStorage() {
         karnEl.checked = true; // default: karn on
     }
     setUsingKarn(karnEl.checked ? 1 : 0);
-    pblWeight        = weightEl.checked;
-    pblUseBarflip    = useBarflipEl.checked;
+    pblWeight = weightEl.checked;
+    pblUseBarflip = useBarflipEl.checked;
     pblShowBarflipUI = globalBarflipEl.checked;
 
     globalBarflipRow.style.display = pblUseBarflip ? '' : 'none';
@@ -996,7 +1005,7 @@ export function pblOnWeights() {
     pblSyncSettingsDisabled();
 }
 
-weightEl.addEventListener("change",   () => pblOnWeights());
+weightEl.addEventListener("change", () => pblOnWeights());
 
 document.querySelectorAll('input[name="scramlen"]').forEach(radio => {
     radio.addEventListener("change", () => {
@@ -1009,7 +1018,7 @@ document.querySelectorAll('input[name="scramlen"]').forEach(radio => {
     });
 });
 
-bottom56El.addEventListener("change", function() {
+bottom56El.addEventListener("change", function () {
     const newBottom56 = this.checked;
     pblCancelIfConflicting(pblScrambleMode, newBottom56);
     pblAllowBottom56 = newBottom56;
@@ -1020,18 +1029,18 @@ bottom56El.addEventListener("change", function() {
 // ─── BARFLIP OVERRIDE UI ─────────────────────────────────────────────────────
 
 const pblBarflipOverrideRow = document.getElementById('barflip-override-row');
-const pblFlippedBtn         = document.getElementById('barflip-flipped');
-const pblSolvedBtn          = document.getElementById('barflip-solved');
+const pblFlippedBtn = document.getElementById('barflip-flipped');
+const pblSolvedBtn = document.getElementById('barflip-solved');
 
 export function pblApplyBarflipUI() {
     const showOverride = pblShowBarflipUI && pblUseBarflip;
     if (pblBarflipOverrideRow) pblBarflipOverrideRow.classList.toggle('hidden', !showOverride);
     if (pblFlippedBtn) pblFlippedBtn.classList.toggle('active', showOverride && pblBarflipOverride === '+');
-    if (pblSolvedBtn)  pblSolvedBtn.classList.toggle('active',  showOverride && pblBarflipOverride === '-');
+    if (pblSolvedBtn) pblSolvedBtn.classList.toggle('active', showOverride && pblBarflipOverride === '-');
 }
 
 function pblSetBarflipOverride(value) {
-    const prev          = pblBarflipOverride;
+    const prev = pblBarflipOverride;
     const prevEffective = pblEffectiveOverride();
     pblBarflipOverride = value;
     pblApplyBarflipUI();
@@ -1090,8 +1099,8 @@ export function pblOnGlobalBarflip() {
 }
 
 globalBarflipEl.addEventListener("change", () => pblOnGlobalBarflip());
-useBarflipEl.addEventListener("change",    () => pblOnUseBarflip());
-countBarflipEl.addEventListener("change",  () => pblOnCountBarflip());
+useBarflipEl.addEventListener("change", () => pblOnUseBarflip());
+countBarflipEl.addEventListener("change", () => pblOnCountBarflip());
 
 if (pblFlippedBtn) {
     pblFlippedBtn.addEventListener('click', () => {
@@ -1121,43 +1130,59 @@ export const pblHelpSections = [
         title: 'Shortcuts',
         svg: HELP_CTRL_SVG,
         html: buildHelpShortcuts([
-            { keys: ['←'],         desc: 'Previous scramble' },
-            { keys: ['→'],         desc: 'Next scramble' },
-            { keys: ['Space'],     desc: 'Start / stop timer' },
+            { keys: ['←'], desc: 'Previous scramble' },
+            { keys: ['→'], desc: 'Next scramble' },
+            { keys: ['Space'], desc: 'Start / stop timer' },
             { keys: ['Backspace'], desc: 'Remove last case' },
-            { keys: ['K'],         desc: 'Toggle karnotation' },
-            { keys: ['E'],         desc: 'Train each case once',
-                info:   "Go through each of your selected cases once, and let you " +
-                        "know when you've gone through all of them. Incompatible " +
-                        "with any of the weights options." },
-            { keys: ['R'],         desc: 'Toggle realistic weights',
-                info:   "Make cases as likely to appear as they are in a real solve. " +
-                        "Incompatible with \"Train each case once\"." },
-            { keys: ['B'],         desc: 'Distinguish between + and − barflip',
-                info:   "Allow selecting + only or - only, for a specific case." },
-            { keys: ['G'],         desc: 'Global barflip override',
-                info:   "Temporarily make all selected cases + or -. Check case " +
-                        "selector to switch between +, -, and none (no override)." },
-            { keys: ['C'],         desc: 'Count + and − as 2 cases',
-                info:   "Count each PBL as 2 cases: + and -. Affects the " +
-                        "\"selected\" count, and the case counts for lists and tags. " +
-                        "Combined with \"Train each case once\", you can train each " +
-                        "case once while treating barflips like different cases." },
-            { keys: ['H'],         desc: 'Hide hint button' },
+            { keys: ['K'], desc: 'Toggle karnotation' },
+            {
+                keys: ['E'], desc: 'Train each case once',
+                info: "Go through each of your selected cases once, and let you " +
+                    "know when you've gone through all of them. Incompatible " +
+                    "with any of the weights options."
+            },
+            {
+                keys: ['R'], desc: 'Toggle realistic weights',
+                info: "Make cases as likely to appear as they are in a real solve. " +
+                    "Incompatible with \"Train each case once\"."
+            },
+            {
+                keys: ['B'], desc: 'Distinguish between + and − barflip',
+                info: "Allow selecting + only or - only, for a specific case."
+            },
+            {
+                keys: ['G'], desc: 'Global barflip override',
+                info: "Temporarily make all selected cases + or -. Check case " +
+                    "selector to switch between +, -, and none (no override)."
+            },
+            {
+                keys: ['C'], desc: 'Count + and − as 2 cases',
+                info: "Count each PBL as 2 cases: + and -. Affects the " +
+                    "\"selected\" count, and the case counts for lists and tags. " +
+                    "Combined with \"Train each case once\", you can train each " +
+                    "case once while treating barflips like different cases."
+            },
+            { keys: ['H'], desc: 'Hide hint button' },
             null,
-            { keys: ['Ctrl', 'F'],      desc: 'Focus search box' },
-            { keys: ['Ctrl', 'Space'],  desc: 'Toggle search bar' },
-            { keys: ['Ctrl', 'A'],      desc: 'Select ALL cases' },
-            { keys: ['Ctrl', 'S'],      desc: 'Select all visible cases',
-                info:   "Select all cases currently shown in the case selector." },
+            { keys: ['Ctrl', 'F'], desc: 'Focus search box' },
+            { keys: ['Ctrl', 'Space'], desc: 'Toggle search bar' },
+            { keys: ['Ctrl', 'A'], desc: 'Select ALL cases' },
+            {
+                keys: ['Ctrl', 'S'], desc: 'Select all visible cases',
+                info: "Select all cases currently shown in the case selector."
+            },
             { keys: ['Ctrl', '⇧', 'A'], desc: 'Deselect ALL cases' },
-            { keys: ['Ctrl', '⇧', 'S'], desc: 'Deselect all visible cases',
-                info:   "Deselect all cases currently shown in the case selector." },
-            { keys: ['Alt', 'A'],       desc: 'Show all' },
-            { keys: ['Alt', 'S'],       desc: 'Show selection',
-                info:   "Show all selected cases." },
-            { keys: ['Ctrl', 'Z'],      desc: 'Undo last selection change' },
-            { keys: ['Ctrl', 'Y'],      desc: 'Redo last selection change' },
+            {
+                keys: ['Ctrl', '⇧', 'S'], desc: 'Deselect all visible cases',
+                info: "Deselect all cases currently shown in the case selector."
+            },
+            { keys: ['Alt', 'A'], desc: 'Show all' },
+            {
+                keys: ['Alt', 'S'], desc: 'Show selection',
+                info: "Show all selected cases."
+            },
+            { keys: ['Ctrl', 'Z'], desc: 'Undo last selection change' },
+            { keys: ['Ctrl', 'Y'], desc: 'Redo last selection change' },
         ])
     },
     {
